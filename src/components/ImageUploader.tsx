@@ -65,7 +65,7 @@ export default function ImageUploader() {
     }
 
     return (
-        <main className="flex min-h-screen flex-col items-center  p-24">
+        <main className="flex flex-col items-center  p-24">
             <div className="flex">
                 {/* <form onSubmit={handleSubmit} className='flex flex-col justify-center'>
                     <input onChange={handleSubmit} type='file' />

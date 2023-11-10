@@ -22,4 +22,23 @@ const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 
-console.log(db)
+import { getDocs, collection } from "firebase/firestore";
+
+
+const collection_name = "blogs"
+
+export const findAll = async () => {
+    const doc_refs = await getDocs(collection(db, collection_name))
+
+    const res: { id: string; }[] = []
+
+    doc_refs.forEach(blog => {
+        res.push({
+            id: blog.id,
+            ...blog.data()
+
+        })
+    })
+    // console.log(res)
+    return res
+}
