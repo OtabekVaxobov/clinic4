@@ -2,30 +2,28 @@
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { useState } from 'react';
 import { db, storage } from '../lib/firebase';
-import firebase from "firebase/compat/app";
 import { doc, setDoc } from "firebase/firestore";
+import { v4 as uuidv4 } from 'uuid';
 
-// Add a new document in collection "cities"
 
 
 export default function ImageUploader() {
 
     const [imgUrl, setImgUrl] = useState();
     const [name, setName] = useState('');
-    const [imageFile, setImageFile] = useState(null);
     const [text, setText] = useState('');
     const [progresspercent, setProgresspercent] = useState(0);
     const [loading, setLoading] = useState(true);
 
+    let currentDate = new Date().toJSON().slice(0, 10);
 
     const onSubmit = async (event: any) => {
         event.preventDefault();
-
-
-        await setDoc(doc(db, "blogs", "LA"), {
+        await setDoc(doc(db, "blogs", uuidv4()), {
             name: name,
             message: text,
             imageUrl: imgUrl,
+            date: currentDate
         });
 
         console.log({
@@ -60,15 +58,14 @@ export default function ImageUploader() {
                     //@ts-ignore 
                     setImgUrl(downloadURL)
                     setLoading(false)
-                    console.log(downloadURL)
-
+                    // console.log(downloadURL)
                 });
             }
         );
     }
 
     return (
-        <main className="flex min-h-screen flex-col items-center justify-between p-24">
+        <main className="flex min-h-screen flex-col items-center  p-24">
             <div className="flex">
                 {/* <form onSubmit={handleSubmit} className='flex flex-col justify-center'>
                     <input onChange={handleSubmit} type='file' />
@@ -84,21 +81,15 @@ export default function ImageUploader() {
                     !imgUrl &&
                     <div className='outerbar'>
                         {/* <div className='innerbar' style={{ width: `${progresspercent}%` }}>{progresspercent}%</div> */}
-                        <div className="h-1 w-full bg-neutral-200 dark:bg-neutral-600">
-                            <div className="h-1 bg-primary" style={{ width: `${progresspercent}%` }}>{progresspercent}%</div>
-                        </div>
+
                     </div>
 
                 }
-                {
-                    imgUrl &&
-                    <>
-                        {/* <img src={imgUrl} alt='uploaded file' height={200} /> */}
-                        {/* {imgUrl} <br /> */}
-                        {name} <br /> {text}
-                    </>
 
-                }
+
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-1.5 mb-4 dark:bg-gray-700">
+                <div className="bg-blue-600 h-1.5 rounded-full dark:bg-blue-500 " style={{ width: progresspercent + "%" }}>{progresspercent}%</div>
             </div>
         </main>
     )
