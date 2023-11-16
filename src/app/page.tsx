@@ -30,7 +30,7 @@ function BlogListItem(props: { blog: any; }) {
   const [text, setText] = useState('');
   const [progresspercent, setProgresspercent] = useState(0);
   const [loading, setLoading] = useState(true);
-
+  const [currentBlogData, setCurrentBlogData] = useState()
   const onSubmit = async (event: any) => {
     let currentDate = new Date().toJSON().slice(0, 10);
     const randomNumber = uuidv4();
@@ -58,6 +58,7 @@ function BlogListItem(props: { blog: any; }) {
     console.log('file:', e.target?.files[0])
     if (!file) return;
 
+
     const storageRef = ref(storage, `files/${file.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
 
@@ -83,9 +84,18 @@ function BlogListItem(props: { blog: any; }) {
     );
   }
 
-  const handleClick = (blog: any) => {
+  interface Blog {
+    date: string,
+    id: string,
+    imageUrl: string,
+    massage: string,
+    name: string,
+    uuid?: string
+  }
+  const handleClick = (blog: Blog) => {
     // 👇️ toggle shown state
     setIsShown(current => !current);
+    setCurrentBlogData(blog)
     console.log(blog)
   };
   const { blog } = props
