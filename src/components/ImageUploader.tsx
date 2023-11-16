@@ -3,7 +3,7 @@ import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { useState } from 'react';
 import { db, storage } from '../lib/firebase';
 import { doc, setDoc } from "firebase/firestore";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';                        // random number
 
 
 
@@ -15,11 +15,14 @@ export default function ImageUploader() {
     const [progresspercent, setProgresspercent] = useState(0);
     const [loading, setLoading] = useState(true);
 
-    let currentDate = new Date().toJSON().slice(0, 10);
+
 
     const onSubmit = async (event: any) => {
+        let currentDate = new Date().toJSON().slice(0, 10);
+        const randomNumber = uuidv4();
         event.preventDefault();
-        await setDoc(doc(db, "blogs", uuidv4()), {
+        await setDoc(doc(db, "blogs", randomNumber), {
+            uiud: randomNumber,
             name: name,
             message: text,
             imageUrl: imgUrl,
@@ -27,9 +30,11 @@ export default function ImageUploader() {
         });
 
         console.log({
+            uiud: randomNumber,
             name: name,
             message: text,
             imageUrl: imgUrl,
+            date: currentDate
         })
     }
 
