@@ -29,19 +29,20 @@ export default function ImageUploader() {
             date: currentDate
         });
 
-        console.log({
-            uiud: randomNumber,
-            name: name,
-            message: text,
-            imageUrl: imgUrl,
-            date: currentDate
-        })
+        // console.log({
+        //     uiud: randomNumber,
+        //     name: name,
+        //     message: text,
+        //     imageUrl: imgUrl,
+        //     date: currentDate
+        // })
+        alert('yangi ozgarishlarni korish uchun saxifani yangilang!')
     }
 
     const handleSubmit = (e: any) => {
         e.preventDefault()
         const file = e.target?.files[0]
-        console.log('file:', e.target?.files[0])
+        //console.log('file:', e.target?.files[0])
         if (!file) return;
 
         const storageRef = ref(storage, `files/${file.name}`);
@@ -77,8 +78,8 @@ export default function ImageUploader() {
                 </form> */}
                 <div className='flex flex-col justify-center'>
                     <input onChange={handleSubmit} type='file' />
-                    <input value={name} onChange={e => setName(e.target.value)} type='text' placeholder="name" />
-                    <input value={text} onChange={e => setText(e.target.value)} type='text' placeholder="Text" />
+                    <input className=" text-black" value={name} onChange={e => setName(e.target.value)} type='text' placeholder="name" />
+                    <input className=" text-black" value={text} onChange={e => setText(e.target.value)} type='text' placeholder="Text" />
                     <button hidden={loading} onClick={onSubmit} type='submit'>Upload</button>
 
                 </div>

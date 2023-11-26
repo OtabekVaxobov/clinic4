@@ -39,6 +39,6 @@ export const findAll = async () => {
 
         })
     })
-    // console.log(res)
+     console.log(res)
     return res
 }

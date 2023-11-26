@@ -23,6 +23,16 @@ export default function Home() {
 
 
 function BlogListItem(props: { blog: any; }) {
+
+  interface Blog {
+    date: string,
+    id: string,
+    imageUrl: string,
+    massage: string,
+    name: string,
+    uuid: string
+  }
+  
   const [isShown, setIsShown] = useState(false);
 
   const [imgUrl, setImgUrl] = useState();
@@ -30,37 +40,16 @@ function BlogListItem(props: { blog: any; }) {
   const [text, setText] = useState('');
   const [progresspercent, setProgresspercent] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [currentBlogData, setCurrentBlogData] = useState(null)
-
-  // const onSubmit = async (event: any) => {
-  //   let currentDate = new Date().toJSON().slice(0, 10);
-  //   const randomNumber = uuidv4();
-  //   event.preventDefault();
-  //   await setDoc(doc(db, "blogs", randomNumber), {
-  //     uuid: randomNumber,
-  //     name: name,
-  //     message: text,
-  //     imageUrl: imgUrl,
-  //     date: currentDate
-  //   });
-
-  //   console.log({
-  //     uuid: randomNumber,
-  //     name: name,
-  //     message: text,
-  //     imageUrl: imgUrl,
-  //     date: currentDate
-  //   })
-  // }
+  const [currentBlogData, setCurrentBlogData] = useState<Blog>()
 
   const handleSubmit = (e: any, fileUrl: string) => {
     e.preventDefault()
 
     const storageRef2 = ref(storage, 'files');
-    console.log('storage:', storageRef2)
+    //console.log('storage:', storageRef2)
 
     const file = e.target?.files[0]
-    console.log('file:', e.target?.files[0])
+    //console.log('file:', e.target?.files[0])
     if (!file) return;
 
     // const photoRef = storage.getInstance().getReferenceFromUrl(contentDTOs[p1].imageUrl.toString())
@@ -91,14 +80,6 @@ function BlogListItem(props: { blog: any; }) {
     );
   }
 
-  interface Blog {
-    date: string,
-    id: string,
-    imageUrl: string,
-    massage: string,
-    name: string,
-    uuid?: string
-  }
   const handleClick = (blog: Blog) => {
     // 👇️ toggle shown state
     setIsShown(current => !current);
@@ -107,33 +88,35 @@ function BlogListItem(props: { blog: any; }) {
     console.log(blog)
   };
 
-  const onSubmit = async (event: Event | undefined, blog: any) => {
+  const onSubmit = async (event: Event | undefined, blog: Blog) => {
     let currentDate = new Date().toJSON().slice(0, 10);
-    // console.log(blog)
+     //console.log('blog:',blog)
     event?.preventDefault();
-    await setDoc(doc(db, "blogs", blog.uuid), {
-      uuid: blog.uuid,
+    await setDoc(doc(db, "blogs", blog.id), {
+      uuid: blog.id,
       name: name,
       message: text,
       imageUrl: imgUrl || blog.imageUrl,
       date: currentDate
     });
 
-    console.log({
-      uuid: blog.uuid,
-      name: blog.name,
-      message: text,
-      imageUrl: imgUrl || blog.imageUrl,
-      date: currentDate
-    })
+    // console.log({
+    //   id: blog.id,
+    //   uuid: blog.uuid,
+    //   name: name,
+    //   message: text,
+    //   imageUrl: imgUrl || blog.imageUrl,
+    //   date: currentDate
+    // })
+    alert('yangi ozgarishlarni korish uchun saxifani yangilang!')
   }
 
   const { blog } = props
   // console.log(blog)
   return (
-    <li className="flex flex-col justify-center content-center">
+    <li className="flex flex-col justify-center p-4 content-center  mx-8">
       {blog.imageUrl ?
-        <div>
+        <div className="border-red-800 border-4">
           <Image loading="lazy" src={blog.imageUrl} width={300} height={300} alt="img" />
           <p>name: {blog.name}</p>
           <p>Continent: {blog.message}</p>
@@ -141,11 +124,21 @@ function BlogListItem(props: { blog: any; }) {
           {isShown && (
             <div className='flex flex-col justify-center'>
               <input onChange={() => handleSubmit(event, blog.imageUrl)} type='file' />
-              <input value={name} onChange={e => setName(e.target.value)} type='text' placeholder="name" />
-              <input value={text} onChange={e => setText(e.target.value)} type='text' placeholder="Text" />
-              <button onClick={() => onSubmit(event, blog)} type='submit'>Upload</button>
+              <input className=" text-black" value={name} onChange={e => setName(e.target.value)} type='text' placeholder="name" />
+              <input className=" text-black" value={text} onChange={e => setText(e.target.value)} type='text' placeholder="Text" />
+              <button  onClick={() => onSubmit(event, blog)} type='submit'>Upload</button>
+              {
+                    !imgUrl &&
+                    <div className='outerbar'>
+                         <div className="w-full bg-gray-200 rounded-full h-1.5 mb-4 dark:bg-gray-700">
+                <div className="bg-blue-600 h-1.5 rounded-full dark:bg-blue-500 " style={{ width: progresspercent + "%" }}>{progresspercent}%</div>
+                    </div>
+                    </div>
 
+                }
             </div>
+
+            
           )}
 
           {/* 👇️ show component on click */}
@@ -177,9 +170,7 @@ function BlogList() {
 
   return (
     <section className="flex flex-col justify-center items-center">
-      <header>
-        <p>Blogs</p>
-      </header>
+      
 
       {loading &&
         <p>loading...</p>
