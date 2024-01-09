@@ -2,12 +2,24 @@
 
 import ImageUploader from "@/components/ImageUploader"
 import Loader from "@/components/Loader"
+import DkUploader from "@/components/dkDataUploader";
 import { db, findAll, storage } from "@/lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { StorageReference, getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import Image from "next/image";
 import { useState, useEffect } from 'react'
 import { v4 as uuidv4 } from 'uuid';
+
+
+
+export interface Blog {
+  date: string,
+  id: string,
+  imageUrl: string,
+  massage: string,
+  name: string,
+  uuid: string
+}
 
 export default function Home() {
 
@@ -24,14 +36,7 @@ export default function Home() {
 
 function BlogListItem(props: { blog: any; }) {
 
-  interface Blog {
-    date: string,
-    id: string,
-    imageUrl: string,
-    massage: string,
-    name: string,
-    uuid: string
-  }
+  
   
   const [isShown, setIsShown] = useState(false);
 
@@ -41,6 +46,10 @@ function BlogListItem(props: { blog: any; }) {
   const [progresspercent, setProgresspercent] = useState(0);
   const [loading, setLoading] = useState(true);
   const [currentBlogData, setCurrentBlogData] = useState<Blog>()
+
+  const [loading2, setLoading2] = useState(true);
+  const [progresspercent2, setProgresspercent2] = useState(0);
+  const [imgUrl2, setImgUrl2] = useState();
 
   const handleSubmit = (e: any, fileUrl: string) => {
     e.preventDefault()
@@ -79,7 +88,43 @@ function BlogListItem(props: { blog: any; }) {
       }
     );
   }
+  // const direktorUpload = (e: any, fileUrl: string) => {
+  //   e.preventDefault()
 
+  //   const storageRef2 = ref(storage, 'files');
+  //   //console.log('storage:', storageRef2)
+
+  //   const file = e.target?.files[0]
+  //   //console.log('file:', e.target?.files[0])
+  //   if (!file) return;
+
+  //   // const photoRef = storage.getInstance().getReferenceFromUrl(contentDTOs[p1].imageUrl.toString())
+  //   // photoRef.delete()
+
+  //   const storageRef = ref(storage, `files/${'direktor.jpg'}`);
+  //   const uploadTask = uploadBytesResumable(storageRef, file);
+  //   console.log("storageRef:",storageRef)
+  //   uploadTask.on("state_changed",
+  //     (snapshot) => {
+  //       const progress =
+  //         Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+  //       console.log(progress)
+  //       setProgresspercent2(progress);
+  //       setLoading2(true)
+  //     },
+  //     (error) => {
+  //       alert(error);
+  //     },
+  //     () => {
+  //       getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+  //         //@ts-ignore 
+  //         setImgUrl2(downloadURL)
+  //         setLoading2(false)
+  //         // console.log(downloadURL)
+  //       });
+  //     }
+  //   );
+  // }
   const handleClick = (blog: Blog) => {
     // 👇️ toggle shown state
     setIsShown(current => !current);
@@ -115,6 +160,7 @@ function BlogListItem(props: { blog: any; }) {
   // console.log(blog)
   return (
     <li className="flex flex-col justify-center p-4 content-center  mx-8">
+      <DkUploader blog={blog}/>
       {blog.imageUrl ?
         <div className="border-red-800 border-4">
           <Image loading="lazy" src={blog.imageUrl} width={300} height={300} alt="img" />
@@ -143,6 +189,7 @@ function BlogListItem(props: { blog: any; }) {
 
           {/* 👇️ show component on click */}
           {/* {isShown && <>texrt</>} */}
+          
         </div> :
         <Loader />
       }
@@ -180,6 +227,7 @@ function BlogList() {
         {countries.length > 0 && countries.map((blog, id) => (
 
           <BlogListItem key={id} blog={blog} />
+          
         ))}
       </ul>
     </section>
